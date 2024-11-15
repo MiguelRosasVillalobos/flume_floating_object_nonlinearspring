@@ -1,0 +1,92 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      dynamicMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+motionSolverLibs    ("libsixDoFRigidBodyMotion.so");
+
+dynamicFvMesh       dynamicOversetFvMesh;
+
+dynamicOversetFvMeshCoeffs
+{
+}
+
+solver          sixDoFRigidBodyMotion;
+
+sixDoFRigidBodyMotionCoeffs
+{
+
+
+    patches         (floatingObject);
+    innerDistance   0.04;
+    outerDistance   0.15;
+    centreOfMass    (0 0 0.3);  
+    mass            0.1;
+    g               (0 0 -9.81);
+    momentOfInertia (1 1 1);
+    velocity        (0 0 0);
+    rhoName         rhoInf;
+    rhoInf          1024.81;
+    report          on;
+    accelerationRelaxation 0.6;
+    //accelerationDamping    0.9;
+
+    solver
+    {
+        type Newmark;
+    }
+
+    constraints
+    {
+
+        /*
+        fixedPoint
+        {
+             sixDoFRigidBodyMotionConstraint point;
+             centreOfRotation (0 0 0.3);
+        }
+        */
+
+        fixedLine
+        {
+            sixDoFRigidBodyMotionConstraint line;
+            direction (0 0 1);
+        }
+
+        /*
+        fixedAxis
+        {
+            sixDoFRigidBodyMotionConstraint axis;
+            axis (0 0 1);
+        }
+        */
+    }  
+    restraints
+        {
+
+            nonlinearSpring
+            {
+                sixDoFRigidBodyMotionRestraint nonlinearSpring;
+                anchor            (0 0 0.33);
+                refAttachmentPt   (0 0 0.4);
+                stiffness         300;
+                lhz           0.1;
+                restLength        0.07;
+            }
+
+        }
+}
+
+
+// ************************************************************************* //

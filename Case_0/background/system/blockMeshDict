@@ -1,0 +1,105 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+scale   1;
+
+l 2;
+hw 0.45;
+wt 0.3;
+H 0.05;
+
+nx 300;
+ny 50;
+nz 50;
+
+vertices
+(
+    (#eval{-$l/2} #eval{-$wt/2} 0)   // 0
+    (#eval{$l/2} #eval{-$wt/2} 0)   // 1
+    (#eval{$l/2} #eval{-$wt/2} $hw)   // 2
+    (#eval{-$l/2} #eval{-$wt/2} $hw)   // 3
+    (#eval{-$l/2} #eval{$wt/2} 0)   // 4
+    (#eval{$l/2} #eval{$wt/2} 0)   // 5
+    (#eval{$l/2} #eval{$wt/2} $hw)   // 6
+    (#eval{-$l/2} #eval{$wt/2} $hw)   // 7
+);
+
+blocks
+(
+    hex (0 3 2 1 4 7 6 5) ($nz $nx $ny) simpleGrading (1 1 1)
+);
+
+edges
+(
+);
+
+boundary
+(
+    // Dummy patch to trigger overset interpolation before any other bcs
+    oversetPatch
+    {
+        type overset;
+        faces ();
+    }
+    inlet
+    {
+        type patch;
+        faces
+        (
+           (0 4 7 3)
+        );
+     }
+     outlet
+     {
+        type patch;
+        faces
+        (
+           (1 5 6 2)
+        );
+     }
+     ground
+     {
+        type wall;
+        faces
+        (
+           (0 1 5 4)
+        );
+     }
+     atmosphere
+     {
+        type patch;
+        faces
+        (
+           (2 3 6 7)
+        );
+     }
+     walls
+     {
+        type patch;
+        faces
+        (
+            (0 1 2 3)
+            (4 5 6 7)
+        );
+     }
+);
+
+mergePatchPairs
+(
+);
+
+
+// ************************************************************************* //
