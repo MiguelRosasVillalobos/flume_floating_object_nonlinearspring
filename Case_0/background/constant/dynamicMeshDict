@@ -80,7 +80,7 @@ sixDoFRigidBodyMotionCoeffs
                 sixDoFRigidBodyMotionRestraint nonlinearSpring;
                 anchor            (0 0 0.33);
                 refAttachmentPt   (0 0 0.4);
-                stiffness         300;
+                stiffness         150;
                 lhz           0.1;
                 restLength        0.07;
             }
